@@ -63,3 +63,67 @@ data storm_avg;
 /*	drop wind:;*/
 	drop wind1-wind4;
 run;
+
+/*wyrazenia warunkowe*/
+data cars_categories;
+	set sashelp.cars;
+	if MSRP <= 30000 then
+		num_category=1;
+	else if MSRP <= 60000 then
+		num_category=2;
+	else num_category=3;
+run;
+
+
+data cars2;
+    set sashelp.cars;
+	length car_category $12;
+    if MSRP<=40000 then do;
+		Cost_Group=1;
+		car_category="Basic";
+	end;
+    else if MSRP<=60000 then do;
+		Cost_Group=2;
+		car_category="Luxury";
+	end;
+    else do;
+		Cost_Group=3;
+		car_category="Extra Luxury";
+	end;
+run;
+
+data Basic Luxury Extra_Luxury;
+    set sashelp.cars;
+	length car_category $12;
+    if MSRP<=40000 then do;
+		Cost_Group=1;
+		car_category="Basic";
+		output Basic;
+	end;
+    else if MSRP<=60000 then do;
+		Cost_Group=2;
+		car_category="Luxury";
+		output Luxury;
+	end;
+    else do;
+		Cost_Group=3;
+		car_category="Extra Luxury";
+		output Extra_Luxury;
+	end;
+run;
+
+/*zlaczenie danych w sql*/
+proc sql;
+	create table class_grades as
+	select t.name, sex, age, teacher, grade
+		from pg1.class_teachers as t 
+			inner join pg1.class_update as c
+		on t.name=c.name;
+quit;
+
+proc sql;
+	select coalesce(t.name, c.name) as name, sex, age, teacher, grade
+		from pg1.class_teachers as t 
+			full join pg1.class_update as c
+		on t.name=c.name;
+quit;

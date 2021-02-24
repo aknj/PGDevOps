@@ -21,3 +21,53 @@ data np_summary2;
 	set pg1.np_summary;
 	parkType = scan(parkName, -1);
 run;
+
+data parks monumets;
+	set pg1.np_summary;
+	if type="NP" then do;
+		parkType="Park";
+		output parks;
+	end;
+	else if type="NM" then do;
+		parkType="Monument";
+		output monumets;
+	end;
+run;
+
+data parks monumets;
+	set pg1.np_summary;
+	select;
+		when (type="NP") do;
+			parkType="Park";
+			output parks;
+		end;
+		when (type="NM") do;
+			parkType="Monument";
+		output monumets;
+		end;
+		otherwise;
+	end;
+run;
+
+data parks monumets;
+	set pg1.np_summary;
+	select (type);
+		when ("NP") do;
+			parkType="Park";
+			output parks;
+		end;
+		when ("NM") do;
+			parkType="Monument";
+		output monumets;
+		end;
+		otherwise;
+	end;
+run;
+
+data car_type;
+	length car_type $ 8;
+    set sashelp.cars;
+    if msrp>80000 then car_type="luxury";
+    else car_type="regular";
+
+run;
