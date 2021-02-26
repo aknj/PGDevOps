@@ -44,6 +44,30 @@ data pracownicy;
 	drop id2 x;
 run;
 
+data script;
+	infile "/opt/sas/Workshop/scripts/lesson4_practice3.sh";
+	input  @'-' a :$100.;
+run;
+
+data script;
+	infile "/opt/sas/Workshop/scripts/lesson4_practice3.sh";
+	input @"#";
+	x=_infile_;
+	backup=find(x,"back");
+run;
+
+data log_msg;
+	infile "&pathPD3/SASApp_STPServer_2020-01-28_sasapp_18318.log";
+	input @'WARN' ;
+	x=_infile_;
+	date=input(scan(x,1,"T"), yymmdd10.);
+	time=input(scan(x,2,"T,"),time8.);
+	msg=strip(substr(x, find(x," - ")+3));
+	format date ddmmyy10. time time.;
+	drop x;
+run;
+
+
 
 
 
